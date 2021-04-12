@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>socket.io live chat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.js "></script>  
+</head>
+<body>
+    <main id="root"> 
+        <div v-show="!login" class="user w-full mx-auto fixed h-screen bg-purple-500"> 
+            <form @submit.prevent="getIn" action="" class="relative w-80 m-auto rounded-md p-4 bg-gray-500 top-40">
+                <h1 class="">enter username: {{name}}</h1><br>
+                <input v-model="name"
+                    class="py-3 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 appearance-none inline-block w-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    placeholder="enter username...">
+                <button type="submit"
+                    class="bg-purple-500 active:bg-green-700 py-2 my-2 px-4 bg-emerald-500 text-white font-semibold rounded-lg shadow-md active:bg-purple-400 focus:outline-none focus:ring-opacity-50"
+                   >submit</button>
+            </form>
+        </div>
+        <div v-show="login" class="message"> 
+            <header class=" w-full p-4 bg-purple-800 text-white">
+                <h1 class="text-base">live chat bethro</h1>
+                <h2 @click="logout" class="absolute right-2 top-4 hover:text-red-400">Logout</h2>     
+            </header> 
+            <div id="messages" class="list-none w-full h-auto m-0 p-0">  
+            </div> 
+            <form id="form" @submit.prevent="sendMsg"  action="" class="p-2 fixed bottom-0 left-0 right-0 flex h-12 box-border bg-gray-500">
+                <input v-model="msg" id="input" autocomplete="off" class="flex-grow rounded-lg m-1 flex-1 appearance-none border border-transparent py-4 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-md rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"/>
+                <button class="m-1 rounded-sm text-white">Send</button> 
+              </form>
+        </div>
+    </main>
+    <script src="/socket.io/socket.io.js"></script> 
+    <script>
+        var socket = io();
+
+const app = new Vue({
+    el: '#root',
+    data: { 
+      name: localStorage.getItem("name")||'',  
+      login: localStorage.getItem("login")|| false, 
+      sm: "",
+      msg: "",
+    },
+     methods:{
+    getIn: function(){
+       if(this.name.length > 5){ 
+          localStorage.setItem("name",this.name);
+          localStorage.setItem("login", true);  
+          this.login = true;         
+       }else{
+          alert("username should be more than 5 characters long")
+       }
+     },
+     sendMsg: function(){
+        if (this.msg) {
+            socket.emit("chat message", this.sm); 
+            this.msg = ""; 
+          }else{
+              alert("cannot send empty message") 
+          }
+     },
+     logout: function () { 
+         localStorage.clear(); 
+         this.login = false; 
+         this.name = ""; 
+      }
+   },
+   watch:{
+       msg: function (params) {
+           this.sm = `<b>@${this.name}:</b> ${this.msg}`;   
+       }
+   }
+  }); 
+  
+  socket.on("chat message", function (msg){  
+             document.querySelector("#messages").innerHTML += `<li>${msg}</li>`;  
+            window.scrollTo(0, document.body.scrollHeight);
+ });  
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "vue-live-chat",
+  "version": "1.0.0",
+  "description": "this is a live vue chat with socket.io",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon src/index.js" 
+  },
+  "keywords": [
+    "socket.io",
+    "live-chat"
+  ],
+  "author": "bethropolis",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^4.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}

@@ -4,7 +4,8 @@
   "description": "this is a live vue chat with socket.io",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon src/index.js" 
+    "start": "nodemon src/index.js",
+    "build": "node src/index.js" 
   },
   "keywords": [
     "socket.io",
